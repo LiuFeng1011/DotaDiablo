@@ -13,7 +13,9 @@ public class GameSceneManager : BaseUnityObject
         Logo,
         Menu,
         Game,
-        Loading
+        ChooseRole,
+        Loading,
+        Map1,
     }
     /// <summary>
     /// 目标场景
@@ -25,8 +27,14 @@ public class GameSceneManager : BaseUnityObject
     /// <param name="tag"></param>
     private static void ChangeScene(SceneTag tag)
     {
-        LoadScene(SceneTag.Loading);
         m_tag = tag;
+        HideSceneAction a = HideSceneAction.Create();
+        if(a == null){
+            ChangeActionFinished();
+        }
+    }
+    public static void ChangeActionFinished(){
+        LoadScene(SceneTag.Loading);
     }
 
     /// <summary>
