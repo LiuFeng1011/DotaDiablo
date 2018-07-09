@@ -5,8 +5,9 @@ using UnityEngine;
 public class CharacterTest : MonoBehaviour {
 
     public GameObject[] btns;
-    public Animator Animator;
+    public Animator animator;
 
+    string lastAnimatorName = "";
 	// Use this for initialization
 	void Start () {
         for (int i = 0; i < btns.Length;  i++){
@@ -20,7 +21,9 @@ public class CharacterTest : MonoBehaviour {
 	}
 
     void BtnCB(GameObject go){
-        Animator.SetTrigger("LoopAll");
-        Animator.Play(go.name);
+
+        animator.SetBool(lastAnimatorName, false);
+        animator.SetBool(go.name, true);
+        lastAnimatorName = go.name;
     }
 }

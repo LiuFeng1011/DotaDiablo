@@ -50,33 +50,6 @@ public enum enAIType{
 	en_aitype_patrol,//巡逻
 }
 
-public enum enCharacterProperty
-{
-    non,
-
-    life = 1,//生命
-    liferevive = 2,  /*  生命回复    */
-
-    atkForce = 3,//攻击力
-
-    atkSpeed = 4,    /*  攻击速度  */
-    moveSpeed = 5,   /*  移动速度  */
-
-    comborate = 6,   /*  暴击几率    */
-    comboval = 7,    /*  暴击伤害    */
-    armor = 8,   /*  护甲  */
-    avoid = 9,   /*  闪避  */
-    returnhurt = 10,  /*  反弹伤害    */
-    steallife = 11,   /*  偷取生命    */
-    golddrop = 12,    /*  金币掉率加成  */
-    equipdrop = 13,   /*  魔法物品掉率  */
-
-    lifeAddition = 15,   /*  生命加成  */
-    armorAddition = 16,   /*  护甲加成  */
-
-    atkForceAddition = 19,      /*  攻击力加成  */
-    maxval,
-}
 
 public static class GameConst  {
 	
