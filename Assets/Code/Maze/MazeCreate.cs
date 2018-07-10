@@ -2,6 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public class MapTree
+{
+    public Vector3 position;
+    public MapTree parent = null;
+    public List<MapTree> children = new List<MapTree>();
+
+    public MapTree(Vector3 position){
+        this.position = position;
+    }
+
+    public void AddChile(MapTree child){
+        child.parent = this;
+        children.Add(child);
+    }
+}
+
 /// <summary>
 /// 迷宫生成类
 /// 迷宫生成思路：
@@ -27,6 +43,8 @@ public class MazeCreate : MonoBehaviour
 
     //迷宫数据
     public List<List<int>> mapList = new List<List<int>>();
+
+    public MapTree tree;
 
     //行数
     public int row{ get; private set; }
@@ -62,15 +80,6 @@ public class MazeCreate : MonoBehaviour
 
     void Start(){
 
-        //留空位置
-        //for (int i = 0; i < 10; i++)
-        //{
-        //    for (int j = 0; j < 10; j ++){
-        //        mapList[row / 2 - 2 + i][col / 2 - 2 + j] = (int)PointType.nullpoint;
-        //    }
-        //}
-
-
         //起始点
         int _row = Random.Range(1, row - 1);
         int _col = Random.Range(1, col - 1);
@@ -79,14 +88,16 @@ public class MazeCreate : MonoBehaviour
  
         mapList[_row][_col] = (int)PointType.startpoint;
 
+        tree = new MapTree(new Vector3(_row,_col));
+
         int nowindex = _row * col + _col;
         findList.Add(nowindex);
 
         //递归生成路径
-        FindPoint(nowindex);
+        FindPoint(nowindex,tree);
     }
 
-    void FindPoint(int nowindex){
+    void FindPoint(int nowindex,MapTree t){
         if(findList.Count >= maxcount){
             return;
         }
@@ -99,14 +110,14 @@ public class MazeCreate : MonoBehaviour
 
             //中间的格子
             int midindex = nowindex + (nearpoint[rand] - nowindex) / 2;
-            SetPoint(midindex);
+            MapTree _t = SetPoint(midindex,t);
 
             //新的格子
             int newindex = nearpoint[rand];
-            SetPoint(newindex);
+            _t = SetPoint(newindex,_t);
             nearpoint.RemoveAt(rand);
             //递归
-            FindPoint(newindex);
+            FindPoint(newindex,_t);
 
             FindNearPoint(nearpoint, nowindex);
         } 
@@ -141,13 +152,19 @@ public class MazeCreate : MonoBehaviour
     }
 
     //设置路径
-    void SetPoint(int index)
+    MapTree SetPoint(int index,MapTree t)
     {
         int _row = index / col;
         int _col = index % col;
         mapList[_row][_col] = (int)PointType.way;
 
+
+        MapTree _t = new MapTree(new Vector3(_row, _col));
+        t.AddChile(_t);
+
         findList.Add(index);
+
+        return _t;
     }
 
     //附近的点是否满足寻找条件

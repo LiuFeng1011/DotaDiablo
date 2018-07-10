@@ -240,6 +240,24 @@ public class GameCommon  {
         else  
             return 360-Vector3.Angle(from_,to_);  
     }  
+
+    public static Vector2 GetWorldPos(Vector2 mappos)
+    {
+        float x = mappos.x + mappos.y;
+        float y = -mappos.x / 2f + mappos.y / 2f;
+
+        Vector2 worldpos = new Vector2(x, y);
+        return worldpos;
+    }
+
+    public static Vector2 GetMapPos(Vector2 worldpos)
+    {
+        float x = worldpos.x / 2f - worldpos.y;
+        float y = worldpos.x - x;
+
+        Vector2 mappos = new Vector2(x, y);
+        return mappos;
+    }
 }
 
 public class GameItem{
