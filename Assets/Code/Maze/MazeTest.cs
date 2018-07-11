@@ -20,12 +20,13 @@ public class MazeTest : MonoBehaviour {
             mapList.Add(new List<int>());
             for (int j = 0; j < col; j++)
             {
-                if (i < 4 || i >= row - 4 || 
-                    j < 4 || j >= col - 4){
-                    mapList[i].Add((int)MazeCreate.PointType.nullpoint);
-                }else{
-                    mapList[i].Add((int)MazeCreate.PointType.wall);
-                }
+                //if (i < 4 || i >= row - 4 || 
+                //    j < 4 || j >= col - 4){
+                //    mapList[i].Add((int)MazeCreate.PointType.nullpoint);
+                //}else{
+                //    mapList[i].Add((int)MazeCreate.PointType.wall);
+                //}
+                mapList[i].Add((int)MazeCreate.PointType.wall);
             }
         }
 
@@ -43,14 +44,20 @@ public class MazeTest : MonoBehaviour {
                 if (mazeCreate.mapList[i][j] == (int)MazeCreate.PointType.startpoint ||
                     mazeCreate.mapList[i][j] == (int)MazeCreate.PointType.way)
                 {
+                    GameObject ground = CreateGround(new Vector3(i, j, 0));
+
+                    int x = i, y = 0,xcount = 0,ycount = 0;
+                    //for(int )
+
                 }else if (mazeCreate.mapList[i][j] == (int)MazeCreate.PointType.nullpoint)
                 {
-                    CreateRocks(new Vector3(i, j, 0));
+                    //CreateRocks(new Vector3(i, j, 0));
                 }else{
-                    CreateObstacle(new Vector3(i, j, 0));
+                    //CreateObstacle(new Vector3(i, j, 0));
+
                 }
 
-                CreateGround(new Vector3(i, j, 0));
+
             }
         }
 	}
@@ -126,13 +133,14 @@ public class MazeTest : MonoBehaviour {
         //}
 	}
 
-    void CreateGround(Vector3 v){
-        GameObject column = (GameObject)Resources.Load("Prefabs/MapObj/grassland_1111_" + Random.Range(1,5));
+    GameObject CreateGround(Vector3 v){
+        GameObject column = (GameObject)Resources.Load("Prefabs/MapObj/MapGround_1_" + Random.Range(0,3));
         column = MonoBehaviour.Instantiate(column);
 
         column.transform.position = GameCommon.GetWorldPos(v) * mapscale;
         column.transform.position += new Vector3(0,0,v.y + 100);
         column.transform.localScale = new Vector3(mapscale, mapscale, mapscale);
+        return column;
     }
 
     void CreateObstacle(Vector3 v){
