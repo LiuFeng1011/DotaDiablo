@@ -30,10 +30,10 @@ public class MazeCreate : MonoBehaviour
 
     public enum PointType{
         wall = 0,//墙
-        way = 1,//路
-        startpoint = 2,//起始点
-        endpoint = 3,//结束点
-        nullpoint = 4,//空位置，不进行任何操作
+        way = 10,//路
+        startpoint = 20,//起始点
+        endpoint = 30,//结束点
+        nullpoint = 40,//空位置，不进行任何操作
     }
 
     /// <summary>
@@ -72,17 +72,46 @@ public class MazeCreate : MonoBehaviour
         Start();
     }
 
+    private MazeCreate(List<List<int>> mapList)
+    {
+        this.row = mapList.Count;
+        this.col = mapList[0].Count;
+
+        maxcount = row * col;
+
+        this.mapList = mapList;
+
+        Start();
+    }
     public static MazeCreate GetMaze(int row, int col)
     {
         MazeCreate maze = new MazeCreate(row,col);
         return maze;
     }
-
+    public static MazeCreate GetMaze(List<List<int>> mapList)
+    {
+        MazeCreate maze = new MazeCreate(mapList);
+        return maze;
+    }
     void Start(){
-
         //起始点
-        int _row = Random.Range(1, row - 1);
-        int _col = Random.Range(1, col - 1);
+
+        int _row = 0, _col = 0;
+        for (int i = 0; i < mapList.Count; i++)
+        {
+            bool isfind = false;
+            for (int j = 0; j < mapList[i].Count; j++)
+            {
+                if(mapList[i][j] != (int)PointType.nullpoint){
+                    _row = i;
+                    _col = j;
+                    isfind = true;
+                    break;
+                }
+            }
+            if (isfind) break;
+        }
+
         if (_row % 2 == 0) {  _row += 1; }
         if (_col % 2 == 0) { _col += 1; }
  

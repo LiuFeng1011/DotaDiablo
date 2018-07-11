@@ -5,33 +5,36 @@ using UnityEngine;
 
 public class MazeTest : MonoBehaviour {
     const float mapscale = 1;
-    const int row = 30, col = 30;
+    const int row = 50, col = 30;
     MazeCreate mazeCreate;
-    int Accumulation = 70;//障碍堆积系数
+    int Accumulation = 95;//障碍堆积系数
     int Erosion = 30;//障碍侵蚀系数
 	// Use this for initialization
     void Start () {
-        mazeCreate = MazeCreate.GetMaze(row, col);
+        //mazeCreate = MazeCreate.GetMaze(row, col);
 
-        string s = "";
+        List<List<int>> mapList = new List<List<int>>();
+
         for (int i = 0; i < row; i++)
         {
+            mapList.Add(new List<int>());
             for (int j = 0; j < col; j++)
             {
-                if (mazeCreate.mapList[i][j] == (int)MazeCreate.PointType.startpoint ||
-                    mazeCreate.mapList[i][j] == (int)MazeCreate.PointType.way)
-                {
-                    CreateMap(new Vector3(i+33, j, 0));
+                if (i < 4 || i >= row - 4 || 
+                    j < 4 || j >= col - 4){
+                    mapList[i].Add((int)MazeCreate.PointType.nullpoint);
+                }else{
+                    mapList[i].Add((int)MazeCreate.PointType.wall);
                 }
-                s += mazeCreate.mapList[i][j];
             }
-            s += "\n";
         }
-        Debug.Log(s);
+
+        mazeCreate = MazeCreate.GetMaze(mapList);
+
+
 
         CreateMap(mazeCreate.tree);
 
-        s = "";
         for (int i = 0; i < row; i++)
         {
             for (int j = 0; j < col; j++)
@@ -40,18 +43,20 @@ public class MazeTest : MonoBehaviour {
                 if (mazeCreate.mapList[i][j] == (int)MazeCreate.PointType.startpoint ||
                     mazeCreate.mapList[i][j] == (int)MazeCreate.PointType.way)
                 {
-                    CreateMap(new Vector3(i, j, 0));
+                }else if (mazeCreate.mapList[i][j] == (int)MazeCreate.PointType.nullpoint)
+                {
+                    CreateRocks(new Vector3(i, j, 0));
+                }else{
+                    CreateObstacle(new Vector3(i, j, 0));
                 }
-                s += mazeCreate.mapList[i][j];
 
+                CreateGround(new Vector3(i, j, 0));
             }
-            s += "\n";
         }
-        Debug.Log(s);
 	}
 
     void CreateMap(MapTree tree){
-        for (int i = 0; i < tree.children.Count; i++)
+        for (int i = tree.children.Count - 1; i >= 0 ; i--)
         {
             CreateMap(tree.children[i]);
         }
@@ -61,14 +66,13 @@ public class MazeTest : MonoBehaviour {
             int rate = Random.Range(0, 100);
             if( rate < Accumulation){
                 
-                mazeCreate.mapList[(int)tree.position.x][(int)tree.position.y] = (int)MazeCreate.PointType.wall;
+                mazeCreate.mapList[(int)tree.position.x][(int)tree.position.y] = (int)MazeCreate.PointType.nullpoint;
 
                 tree.parent.children.Remove(tree);
-
                 return;
             }
         }
-        CreateMap(tree.position + new Vector3(0,33));
+        //CreateGround(tree.position + new Vector3(0,33));
 
         int x = (int)tree.position.x;
         int y = (int)tree.position.y;
@@ -93,7 +97,7 @@ public class MazeTest : MonoBehaviour {
         if (Random.Range(0, 100) < Erosion)
         {
             mazeCreate.mapList[x][y] = (int)MazeCreate.PointType.way;
-            CreateMap(new Vector3(x, y + 33));
+            //CreateGround(new Vector3(x, y + 33));
         }
     }
 
@@ -122,11 +126,31 @@ public class MazeTest : MonoBehaviour {
         //}
 	}
 
-    void CreateMap(Vector3 v){
-        GameObject column = (GameObject)Resources.Load("Prefabs/MapObj/grassland_1111_" + Random.Range(1,8));
+    void CreateGround(Vector3 v){
+        GameObject column = (GameObject)Resources.Load("Prefabs/MapObj/grassland_1111_" + Random.Range(1,5));
         column = MonoBehaviour.Instantiate(column);
 
         column.transform.position = GameCommon.GetWorldPos(v) * mapscale;
+        column.transform.position += new Vector3(0,0,v.y + 100);
+        column.transform.localScale = new Vector3(mapscale, mapscale, mapscale);
+    }
+
+    void CreateObstacle(Vector3 v){
+        GameObject column = (GameObject)Resources.Load("Prefabs/MapObj/obstacle_" + Random.Range(0, 4));
+        column = MonoBehaviour.Instantiate(column);
+
+        column.transform.position = GameCommon.GetWorldPos(v) * mapscale;
+        column.transform.position += new Vector3(0, 0, v.y);
+        column.transform.localScale = new Vector3(mapscale, mapscale, mapscale);
+    }
+
+    void CreateRocks(Vector3 v)
+    {
+        GameObject column = (GameObject)Resources.Load("Prefabs/MapObj/rocks_" + Random.Range(0, 8));
+        column = MonoBehaviour.Instantiate(column);
+
+        column.transform.position = GameCommon.GetWorldPos(v) * mapscale;
+        column.transform.position += new Vector3(0, 0, v.y);
         column.transform.localScale = new Vector3(mapscale, mapscale, mapscale);
     }
 }
